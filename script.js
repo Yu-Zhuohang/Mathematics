@@ -291,6 +291,16 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function downloadPDF() {
+        const pdfPath = 'PDF/高等数学手写讲义（数学一）.pdf';
+        const link = document.createElement('a');
+        link.href = pdfPath;
+        link.download = '高等数学手写讲义（数学一）.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
     loadSettings();
     zoomTo(currentZoom);
     generateThumbnails();
@@ -303,6 +313,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.previousPage = previousPage;
     window.nextPage = nextPage;
     window.toggleFullscreen = toggleFullscreen;
+    window.downloadPDF = downloadPDF;
 });
 
 document.addEventListener('contextmenu', function (e) {
