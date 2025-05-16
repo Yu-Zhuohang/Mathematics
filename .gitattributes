@@ -1,1 +1,2 @@
 PDF/*.pdf filter=lfs diff=lfs merge=lfs -text
+PDF/高等数学手写讲义（数学一）.pdf filter=lfs diff=lfs merge=lfs -text
