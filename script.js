@@ -292,14 +292,110 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function downloadPDF() {
-        const pdfPath = 'PDF/高等数学手写讲义（数学一）.pdf';
-        const link = document.createElement('a');
-        link.href = pdfPath;
-        link.download = '高等数学手写讲义（数学一）.pdf';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+    const localPath = 'PDF/高等数学手写讲义（数学一）.pdf';
+    const githubUrl = 'https://github.com/Yu-Zhuohang/Mathematics/raw/refs/heads/main/PDF/%E9%AB%98%E7%AD%89%E6%95%B0%E5%AD%A6%E6%89%8B%E5%86%99%E8%AE%B2%E4%B9%89%EF%BC%88%E6%95%B0%E5%AD%A6%E4%B8%80%EF%BC%89.pdf?download=';
+    const fileName = '高等数学手写讲义（数学一）.pdf';
+
+    const downloadBtn = document.querySelector('[onclick="downloadPDF()"]');
+    if (downloadBtn.classList.contains('downloading')) {
+        return;
     }
+    downloadBtn.classList.add('downloading');
+
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    overlay.style.display = 'flex';
+    overlay.style.justifyContent = 'center';
+    overlay.style.alignItems = 'center';
+    overlay.style.zIndex = '1000';
+
+    const messageBox = document.createElement('div');
+    messageBox.style.backgroundColor = '#fff';
+    messageBox.style.padding = '25px';
+    messageBox.style.borderRadius = '10px';
+    messageBox.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.2)';
+    messageBox.style.textAlign = 'center';
+    messageBox.style.maxWidth = '320px';
+
+    const title = document.createElement('h3');
+    title.textContent = '准备下载';
+    title.style.margin = '0 0 10px 0';
+    title.style.color = '#333';
+    title.style.fontSize = '18px';
+
+    const messageText = document.createElement('p');
+    messageText.textContent = '正在请求下载链接，请稍候...';
+    messageText.style.margin = '0 0 20px 0';
+    messageText.style.color = '#666';
+    messageText.style.fontSize = '14px';
+
+    const progressBar = document.createElement('div');
+    progressBar.style.width = '100%';
+    progressBar.style.height = '6px';
+    progressBar.style.backgroundColor = '#f0f0f0';
+    progressBar.style.borderRadius = '3px';
+    progressBar.style.overflow = 'hidden';
+    progressBar.style.marginBottom = '15px';
+
+    const progressFill = document.createElement('div');
+    progressFill.style.width = '0%';
+    progressFill.style.height = '100%';
+    progressFill.style.backgroundColor = '#4CAF50';
+    progressFill.style.transition = 'width 0.3s ease';
+    progressBar.appendChild(progressFill);
+
+    messageBox.appendChild(title);
+    messageBox.appendChild(messageText);
+    messageBox.appendChild(progressBar);
+    overlay.appendChild(messageBox);
+    document.body.appendChild(overlay);
+
+    let progress = 0;
+    const progressInterval = setInterval(() => {
+        progress += 5;
+        progressFill.style.width = `${Math.min(progress, 90)}%`;
+        if (progress >= 90) clearInterval(progressInterval);
+    }, 200);
+
+    fetch(localPath, { method: 'HEAD' })
+        .then(response => {
+            const downloadUrl = response.ok ? localPath : githubUrl;
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        })
+        .catch(() => {
+            const link = document.createElement('a');
+            link.href = githubUrl;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        })
+        .finally(() => {
+            progressFill.style.width = '100%';
+            title.textContent = '开始下载';
+            messageText.textContent = '文件已开始下载，请稍候...';
+            
+            setTimeout(() => {
+                overlay.style.opacity = '0';
+                overlay.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => {
+                    document.body.removeChild(overlay);
+                }, 500);
+            }, 2000);
+
+            downloadBtn.classList.remove('downloading');
+        });
+}
 
     loadSettings();
     zoomTo(currentZoom);
