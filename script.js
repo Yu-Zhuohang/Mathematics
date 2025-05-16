@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const container = document.createElement('div');
             container.className = 'thumbnail-container';
             const img = document.createElement('img');
-            img.src = `Mathematics/SVG/${String(i).padStart(4, '0')}.svg`;
+            img.src = `SVG/${String(i).padStart(4, '0')}.svg`;
             img.className = 'thumbnail';
             img.dataset.page = i;
             img.onclick = () => goToPage(i);
